@@ -33,7 +33,7 @@ class NKUST_Calendar:
         
         raw_pdf_text = raw_pdf_text.decode('utf-8')
         raw_pdf_list = raw_pdf_text.split('\n')
-        
+        self.raw_list = raw_pdf_list
         # get office name dict 
         for i in raw_pdf_list:
             if i.find('單位簡稱') > -1:
@@ -47,7 +47,7 @@ class NKUST_Calendar:
         res = {'data':[]}
         for i in raw_pdf_text.split('\n'):
             
-            if i.find('○') > -1 and i.find('單位簡稱') == -1:
+            if re.match('.{0,7}([0-9]{1,2}/[0-9]{1,2})',i) != None and i.find('單位簡稱') == -1:
                 
                 for k,v in replace_dict.items():
                     if i.find(k) > -1:
@@ -147,8 +147,8 @@ class NKUST_Calendar:
                 if i['info'].find('開始上課') > -1:
                     diff = timedelta(days=day.isoweekday())
                     self.week_startDays = day-diff
-                
-                self.json_make(date=day,info=i['info'],office=i['office'])
+                info=info.replace('-',' ~ ')
+                self.json_make(date=day,info=info,office=i['office'])
 
 
 if __name__ == "__main__":
